@@ -1,6 +1,6 @@
 <?php
 /**
- * Options for the filelist plugin
+ * Options for the flattr plugin
  */
 
 $conf['default_uid'] = '';
