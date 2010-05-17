@@ -47,6 +47,10 @@ class syntax_plugin_flattr extends DokuWiki_Syntax_Plugin {
     }
 
     function handle($match, $state, $pos, & $handler) {
+        // do not allow the syntax in comments
+        if (isset($_REQUEST['comment']))
+            return false;
+
         $params = array();
         $match = trim($match);
 
