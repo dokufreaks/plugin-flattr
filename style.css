@@ -1,0 +1,19 @@
+/* flattr */
+div.flattr_left, div.flattr_right, div.flattr_center {
+    text-align: center;
+}
+
+div.flattr_left {
+    padding-right: 1em !important;
+    float: left;
+}
+
+div.flattr_right {
+    padding-left: 1em !important;
+    float: right;
+}
+
+div.flattr_center {
+    margin: auto;
+    width: 100%;
+}
