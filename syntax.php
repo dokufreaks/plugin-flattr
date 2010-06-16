@@ -23,14 +23,18 @@ class syntax_plugin_flattr extends DokuWiki_Syntax_Plugin {
     );
 
     function getInfo() {
-        return array (
-            'author' => 'Gina Haeussge',
-            'email' => 'osd@foosel.net',
-            'date' => @file_get_contents(DOKU_PLUGIN.'flattr/VERSION'),
-            'name' => 'Flattr Plugin',
-            'desc' => 'Inserts a flattr button into the current wikipage',
-            'url' => 'http://foosel.org/snippets/dokuwiki/flattr',
-        );
+        try {
+            return parent::getInfo();
+        } catch (Exception $e) {
+            return array (
+                'author' => 'Gina Haeussge',
+                'email' => 'osd@foosel.net',
+                'date' => @file_get_contents(DOKU_PLUGIN.'flattr/VERSION'),
+                'name' => 'Flattr Plugin',
+                'desc' => 'Inserts a flattr button into the current wikipage',
+                'url' => 'http://foosel.org/snippets/dokuwiki/flattr',
+            );
+        }
     }
 
     function getType() {
@@ -71,25 +75,8 @@ class syntax_plugin_flattr extends DokuWiki_Syntax_Plugin {
         }
 
         //~~ validation
-        if (isset($params['align'])) {
-            if (!in_array($params['align'], array('left', 'center', 'right')))
-                $params['align'] = 'left';
-        }
-
-        if (isset($params['button'])) {
-            if (!in_array($params['button'], array('compact')))
-                unset($params['button']);
-        }
-
-        if (isset($params['category'])) {
-            if (!in_array($params['category'], array('text', 'images', 'video', 'audio', 'software', 'rest')))
-                $params['category'] = $this->getConf('default_category');
-        }
-
-        if (isset($params['uid'])) {
-            if (preg_match('#^[1-9][0-9]*$#', $params['uid']) != 1)
-                unset($params['uid']);
-        }
+        $helper =& plugin_load('helper', 'flattr');
+        $helper->validateParameters($params);
 
         return ($params);
     }
@@ -109,54 +96,11 @@ class syntax_plugin_flattr extends DokuWiki_Syntax_Plugin {
         if ($mode == 'xhtml') {
             //~~ insert default values for empty parameters
             $meta = p_get_metadata($ID);
-            foreach ($this->validParameters as $p) {
-                if (!isset($params[$p])) {
-                    switch ($p) {
-                        case 'uid': {
-                            $params['uid'] = $this->getConf('default_uid');
-                            break;
-                        }
-                        case 'category': {
-                            $params['category'] = $this->getConf('default_category');
-                            break;
-                        }
-                        case 'title': {
-                            $params['title'] = tpl_pagetitle($ID, true);
-                            break;
-                        }
-                        case 'description': {
-                            $params['description'] = $meta['description']['abstract'];
-                            break;
-                        }
-                        case 'language': {
-                            $params['language'] = $this->getConf('default_language');
-                            break;
-                        }
-                        case 'align': {
-                            $params['align'] = 'left';
-                            break;
-                        }
-                    }
-                }
-            }
+            $helper =& plugin_load('helper', 'flattr');
+            $helper->insertMissingParameters($params, tpl_pagetitle($ID, true), $meta['description']['abstract']);
 
             //~~ render
-            $renderer->doc .= '<div class="flattr_'.$params['align'].'">';
-            $renderer->doc .= '<script type="text/javascript">';
-            $renderer->doc .= 'var flattr_uid = \''.$renderer->_xmlEntities($params['uid']).'\';';
-            $renderer->doc .= 'var flattr_tle = \''.$renderer->_xmlEntities($params['title']).'\';';
-            $renderer->doc .= 'var flattr_dsc = \''.$renderer->_xmlEntities($params['description']).'\';';
-            $renderer->doc .= 'var flattr_cat = \''.$renderer->_xmlEntities($params['category']).'\';';
-            $renderer->doc .= 'var flattr_lng = \''.$renderer->_xmlEntities($params['language']).'\';';
-            if (isset($params['tag'])) // optional
-                $renderer->doc .= 'var flattr_tag = \''.$renderer->_xmlEntities($params['tag']).'\';';
-            if (isset($params['url'])) // optional
-                $renderer->doc .= 'var flattr_url = \''.$renderer->_xmlEntities($params['url']).'\';';
-            if (isset($params['button'])) // optional
-                $renderer->doc .= 'var flattr_btn = \''.$renderer->_xmlEntities($params['button']).'\';';
-            $renderer->doc .= '</script>';
-            $renderer->doc .= '<script src="http://api.flattr.com/button/load.js" type="text/javascript"></script>';
-            $renderer->doc .= '</div>';
+            $renderer->doc .= $helper->getEmbedCode($params);
             return true;
         }
     }
