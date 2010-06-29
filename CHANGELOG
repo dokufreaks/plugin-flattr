@@ -1,2 +1,7 @@
-* 2010/05/16:
-  * Initial release
+  * 2010/06/29:
+    * Added ability to create static (HTML only) buttons (Implements Issue #4)
+  * 2010/06/16:
+    * Introduced helper plugin (as preparation for Issue #2)
+    * Fixed Issue #1, Issue #3
+  * 2010/05/17:
+    * Initial release
