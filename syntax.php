@@ -18,10 +18,6 @@ require_once (DOKU_INC . 'inc/pageutils.php');
 
 class syntax_plugin_flattr extends DokuWiki_Syntax_Plugin {
 
-    var $validParameters = array(
-        'uid', 'title', 'description', 'category', 'language', 'tag', 'url', 'button', 'align'
-    );
-
     function getInfo() {
         try {
             return parent::getInfo();
@@ -59,6 +55,7 @@ class syntax_plugin_flattr extends DokuWiki_Syntax_Plugin {
         $match = trim($match);
 
         //~~ parse the long syntax if given
+        $helper =& plugin_load('helper', 'flattr');
         if (substr($match, 0, 8) == '<flattr>') {
             $lines = explode("\n", substr($match, 8, -9));
             if (trim($lines[0]) === '')
@@ -69,13 +66,12 @@ class syntax_plugin_flattr extends DokuWiki_Syntax_Plugin {
             foreach ($lines as $line) {
                 $line = trim($line);
                 list($name, $value) = explode('=', $line, 2);
-                if (in_array($name, $this->validParameters))
+                if (in_array($name, $helper->validParameters))
                     $params[trim($name)] = trim($value);
             }
         }
 
         //~~ validation
-        $helper =& plugin_load('helper', 'flattr');
         $helper->validateParameters($params);
 
         return ($params);

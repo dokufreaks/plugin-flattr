@@ -18,7 +18,7 @@ require_once (DOKU_INC . 'inc/pageutils.php');
 class helper_plugin_flattr extends DokuWiki_Plugin {
 
     var $validParameters = array(
-        'uid', 'title', 'description', 'category', 'language', 'tag', 'url', 'button', 'align'
+        'uid', 'title', 'description', 'category', 'language', 'tag', 'url', 'button', 'align', 'thing'
     );
 
     function validateParameters($params) {
@@ -28,8 +28,8 @@ class helper_plugin_flattr extends DokuWiki_Plugin {
         }
 
         if (isset($params['button'])) {
-            if (!in_array($params['button'], array('compact')))
-                unset($params['button']);
+            if (!in_array($params['button'], array('normal', 'compact', 'static')))
+                $params['button'] = 'normal';
         }
 
         if (isset($params['category'])) {
@@ -40,6 +40,11 @@ class helper_plugin_flattr extends DokuWiki_Plugin {
         if (isset($params['uid'])) {
             if (preg_match('#^[1-9][0-9]*$#', $params['uid']) != 1)
                 unset($params['uid']);
+        }
+
+        if (isset($params['thing'])) {
+            if (preg_match('#^[0-9]+$#', $params['thing']) != 1)
+                unset($params['thing']);
         }
     }
 
@@ -77,8 +82,36 @@ class helper_plugin_flattr extends DokuWiki_Plugin {
     }
 
     function getEmbedCode($params) {
+        if (!isset($params['align']))
+            return '[n/a: alignment not set]';
+
         $code = '<div class="flattr_'.$this->_xmlEntities($params['align']).'">';
-        $code .= '<script type="text/javascript">';
+        switch ($params['button']) {
+            case 'static':
+                $code .= $this->getStaticEmbedCode($params);
+                break;
+            default:
+                $code .= $this->getJsEmbedCode($params);
+                break;
+        }
+        $code .= '</div>';
+
+        return $code;
+    }
+
+    function getJsEmbedCode($params) {
+        if (!isset($params['uid']))
+            return '[n/a: uid not set]';
+        if (!isset($params['title']))
+            return '[n/a: title not set]';
+        if (!isset($params['description']))
+            return '[n/a: description not set]';
+        if (!isset($params['category']))
+            return '[n/a: category not set]';
+        if (!isset($params['language']))
+            return '[n/a: language not set]';
+
+        $code = '<script type="text/javascript">';
         $code .= 'var flattr_uid = \''.$this->_xmlEntities($params['uid']).'\';'.DOKU_LF;
         $code .= 'var flattr_tle = \''.$this->_xmlEntities($params['title']).'\';'.DOKU_LF;
         $code .= 'var flattr_dsc = \''.str_replace("\n", "", nl2br($this->_xmlEntities($params['description']))).'\';'.DOKU_LF;
@@ -92,7 +125,18 @@ class helper_plugin_flattr extends DokuWiki_Plugin {
             $code .= 'var flattr_btn = \''.$this->_xmlEntities($params['button']).'\';'.DOKU_LF;
         $code .= '</script>';
         $code .= '<script src="http://api.flattr.com/button/load.js" type="text/javascript"></script>';
-        $code .= '</div>';
+
+        return $code;
+    }
+
+    function getStaticEmbedCode($params) {
+        if (!isset($params['thing'])) {
+            return '[n/a: thing id not set]';
+        }
+
+        $code = '<a href="https://flattr.com/thing/'.$this->_xmlEntities($params['thing']).'">'.DOKU_LF;
+        $code .= '<img src="'.DOKU_URL.'/lib/plugins/flattr/button-static.png" />'.DOKU_LF;
+        $code .= '</a>'.DOKU_LF;
 
         return $code;
     }
