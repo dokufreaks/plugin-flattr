@@ -48,7 +48,7 @@ class helper_plugin_flattr extends DokuWiki_Plugin {
         }
     }
 
-    function insertMissingParameters(&$params, $title, $description) {
+    function insertMissingParameters(&$params, $title, $description, $tags) {
         foreach ($this->validParameters as $p) {
             if (!isset($params[$p])) {
                 switch ($p) {
@@ -74,6 +74,10 @@ class helper_plugin_flattr extends DokuWiki_Plugin {
                     }
                     case 'align': {
                         $params['align'] = 'left';
+                        break;
+                    }
+                    case 'tag': {
+                        if ($tags) $params['tag'] = $tags;
                         break;
                     }
                 }
