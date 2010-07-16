@@ -104,29 +104,47 @@ class helper_plugin_flattr extends DokuWiki_Plugin {
     }
 
     function getJsEmbedCode($params) {
-        if (!isset($params['uid']))
-            return '[n/a: uid not set]';
-        if (!isset($params['title']))
-            return '[n/a: title not set]';
-        if (!isset($params['description']))
-            return '[n/a: description not set]';
-        if (!isset($params['category']))
-            return '[n/a: category not set]';
-        if (!isset($params['language']))
-            return '[n/a: language not set]';
+        // Map long param names to flattr names
+        $mappings = array('uid'         => 'uid',
+                          'title'       => 'tle',
+                          'description' => 'dsc',
+                          'category'    => 'cat',
+                          'language'    => 'lng',
+                          'tag'         => 'tag',
+                          'url'         => 'url',
+                          'btn'         => 'btn');
 
+        $m_params = array();
+        foreach($mappings as $from => $to) {
+            if (isset($params[$to])) {
+                $m_params[$to] = $params[$to];
+            } elseif (isset($params[$from])) {
+                $m_params[$to] = $params[$from];
+            }
+        }
+        $params = $m_params;
+
+        // Check if one of the two mandatory params sets are given
+        $mandatories = array(array('url'),
+                             array('uid', 'tle', 'dsc', 'cat', 'lng'));
+        foreach($mandatories as $mand) {
+            $failed = array_diff($mand, array_keys($params));
+            if (count($failed) === 0) {
+                break;
+            }
+        }
+        if (count($failed) > 0) {
+            return '[n/a: ' . implode(', ', $failed) . ' not set]';
+        }
+
+        // Write flattr params
+        if (isset($params['dsc'])) {
+            $params['dsc'] = strtr(nl2br($params['dsc']), DOKU_LF, '');
+        }
         $code = '<script type="text/javascript">';
-        $code .= 'var flattr_uid = \''.$this->_xmlEntities($params['uid']).'\';'.DOKU_LF;
-        $code .= 'var flattr_tle = \''.$this->_xmlEntities($params['title']).'\';'.DOKU_LF;
-        $code .= 'var flattr_dsc = \''.str_replace("\n", "", nl2br($this->_xmlEntities($params['description']))).'\';'.DOKU_LF;
-        $code .= 'var flattr_cat = \''.$this->_xmlEntities($params['category']).'\';'.DOKU_LF;
-        $code .= 'var flattr_lng = \''.$this->_xmlEntities($params['language']).'\';'.DOKU_LF;
-        if (isset($params['tag'])) // optional
-            $code .= 'var flattr_tag = \''.$this->_xmlEntities($params['tag']).'\';'.DOKU_LF;
-        if (isset($params['url'])) // optional
-            $code .= 'var flattr_url = \''.$this->_xmlEntities($params['url']).'\';'.DOKU_LF;
-        if (isset($params['button'])) // optional
-            $code .= 'var flattr_btn = \''.$this->_xmlEntities($params['button']).'\';'.DOKU_LF;
+        foreach($params as $k => $v) {
+            $code .= 'var flattr_' . $k . ' = \'' . $this->_xmlEntities($v) . '\'' . DOKU_LF;
+        }
         $code .= '</script>';
         $code .= '<script src="http://api.flattr.com/button/load.js" type="text/javascript"></script>';
 
