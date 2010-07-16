@@ -143,7 +143,7 @@ class helper_plugin_flattr extends DokuWiki_Plugin {
         }
         $code = '<script type="text/javascript">';
         foreach($params as $k => $v) {
-            $code .= 'var flattr_' . $k . ' = \'' . $this->_xmlEntities($v) . '\'' . DOKU_LF;
+            $code .= 'var flattr_' . $k . ' = \'' . $this->_xmlEntities($v) . '\';' . DOKU_LF;
         }
         $code .= '</script>';
         $code .= '<script src="http://api.flattr.com/button/load.js" type="text/javascript"></script>';
