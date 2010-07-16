@@ -139,7 +139,7 @@ class helper_plugin_flattr extends DokuWiki_Plugin {
 
         // Write flattr params
         if (isset($params['dsc'])) {
-            $params['dsc'] = strtr(nl2br($params['dsc']), DOKU_LF, '');
+            $params['dsc'] = str_replace("\n", ' ', $params['dsc']);
         }
         $code = '<script type="text/javascript">';
         foreach($params as $k => $v) {
