@@ -91,15 +91,8 @@ class syntax_plugin_flattr extends DokuWiki_Syntax_Plugin {
         $params = $indata;
         if ($mode == 'xhtml') {
             //~~ insert default values for empty parameters
-            $meta = p_get_metadata($ID);
-            $tags = null;
-            if (!isset($params['tag'])) {
-                // fetch the tags from metadata
-                $tags = $meta['subject'];
-                if (!is_array($tags)) $tags = explode(' ', $tags);
-            }
             $helper =& plugin_load('helper', 'flattr');
-            $helper->insertMissingParameters($params, tpl_pagetitle($ID, true), $meta['description']['abstract'], join(',', $tags));
+            $helper->insertMissingParameters($params);
 
             //~~ render
             $renderer->doc .= $helper->getEmbedCode($params);

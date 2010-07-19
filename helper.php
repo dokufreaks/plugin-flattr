@@ -48,7 +48,13 @@ class helper_plugin_flattr extends DokuWiki_Plugin {
         }
     }
 
-    function insertMissingParameters(&$params, $title, $description, $tags) {
+    function insertMissingParameters(&$params, $title=false, $description=false, $tag=false) {
+        global $ID;
+        $meta = p_get_metadata($ID);
+
+        // Support deprecated parameters
+        $params = array_merge($params, array_filter(compact('title', 'description', 'tag')));
+
         foreach ($this->validParameters as $p) {
             if (!isset($params[$p])) {
                 switch ($p) {
@@ -61,11 +67,11 @@ class helper_plugin_flattr extends DokuWiki_Plugin {
                         break;
                     }
                     case 'title': {
-                        $params['title'] = $title;
+                        $params['title'] = tpl_pagetitle($ID, true);
                         break;
                     }
                     case 'description': {
-                        $params['description'] = $description;
+                        $params['description'] = $meta['description']['abstract'];
                         break;
                     }
                     case 'language': {
@@ -77,7 +83,9 @@ class helper_plugin_flattr extends DokuWiki_Plugin {
                         break;
                     }
                     case 'tag': {
-                        if ($tags) $params['tag'] = $tags;
+                        $tags = $meta['subject'];
+                        if (!is_array($tags)) $tags = explode(' ', $tags);
+                        $params['tag'] = implode(',', $tags);
                         break;
                     }
                 }
