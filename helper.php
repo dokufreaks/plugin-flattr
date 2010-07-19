@@ -171,6 +171,13 @@ class helper_plugin_flattr extends DokuWiki_Plugin {
         return $code;
     }
 
+    function tpl_flattrbtn($params = array(), $ret = false) {
+        $this->insertMissingParameters($params);
+        $btn = $this->getEmbedCode($params);
+        if ($ret) return $btn;
+        echo $btn;
+    }
+
     function _xmlEntities($string) {
         return htmlspecialchars($string,ENT_QUOTES,'UTF-8');
     }
