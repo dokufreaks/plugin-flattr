@@ -120,7 +120,7 @@ class helper_plugin_flattr extends DokuWiki_Plugin {
                           'language'    => 'lng',
                           'tag'         => 'tag',
                           'url'         => 'url',
-                          'btn'         => 'btn');
+                          'button'      => 'btn');
 
         $m_params = array();
         foreach($mappings as $from => $to) {
