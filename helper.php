@@ -21,7 +21,7 @@ class helper_plugin_flattr extends DokuWiki_Plugin {
         'uid', 'title', 'description', 'category', 'language', 'tag', 'url', 'button', 'align', 'thing'
     );
 
-    function validateParameters($params) {
+    function validateParameters(&$params) {
         if (isset($params['align'])) {
             if (!in_array($params['align'], array('left', 'center', 'right')))
                 $params['align'] = 'left';
