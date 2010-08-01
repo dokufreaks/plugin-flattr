@@ -49,8 +49,8 @@ class helper_plugin_flattr extends DokuWiki_Plugin {
     }
 
     function insertMissingParameters(&$params, $title=false, $description=false, $tag=false) {
-        global $ID;
-        $meta = p_get_metadata($ID);
+        global $INFO;
+        $meta = p_get_metadata($INFO['id']);
 
         // Support deprecated parameters
         $params = array_merge($params, array_filter(compact('title', 'description', 'tag')));
