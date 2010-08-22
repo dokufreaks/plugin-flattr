@@ -7,11 +7,11 @@
     
     s.type = 'text/javascript';
     s.async = true;
-    s.src = 'http://api.flattr.com/js/0.5.0/load.js';
+    if (location.protocol == 'https:') {
+        s.src = 'https://api.flattr.com/js/0.5.0/load.js?mode=auto';
+    } else {
+        s.src = 'http://api.flattr.com/js/0.5.0/load.js?mode=auto';
+    }
     
     t.parentNode.insertBefore(s, t);
 })();
-
-addInitEvent(function() {
-    FlattrLoader.setup();
-});
