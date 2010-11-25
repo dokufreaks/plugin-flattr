@@ -37,6 +37,10 @@ class syntax_plugin_flattr extends DokuWiki_Syntax_Plugin {
         return 'substition';
     }
 
+    function getPType() {
+        return 'block';
+    }
+
     function getSort() {
         return 124;
     }
