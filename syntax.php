@@ -66,8 +66,10 @@ class syntax_plugin_flattr extends DokuWiki_Syntax_Plugin {
             foreach ($lines as $line) {
                 $line = trim($line);
                 list($name, $value) = explode('=', $line, 2);
+                $name  = trim(strtolower($name));
+                $value = trim($value);
                 if (in_array($name, $helper->validParameters))
-                    $params[trim($name)] = trim($value);
+                    $params[$name] = $value;
             }
         }
 
