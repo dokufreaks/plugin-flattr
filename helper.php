@@ -146,14 +146,14 @@ class helper_plugin_flattr extends DokuWiki_Plugin {
 
         // Write flattr button definition
         $code = '<a class="FlattrButton" style="display:none;" ';
-        $code .= 'title="'.$params['title'].'" ';
-        $code .= 'href="'.$params['url'].'" ';
+        $code .= 'title="'.hsc($params['title']).'" ';
+        $code .= 'href="'.hsc($params['url']).'" ';
         $code .= 'rev="flattr;';
         foreach ($rev_params as $key => $value) {
-            $code .= $key . ':' . $value . ';';
+            $code .= hsc($key . ':' . $value . ';');
         }
         $code .= '">';
-        $code .= str_replace("\n", "<br />", $params['description']);
+        $code .= str_replace("\n", "<br />", hsc($params['description']));
         $code .= '</a>';
 
         return $code;
