@@ -38,7 +38,7 @@ class helper_plugin_flattr extends DokuWiki_Plugin {
         }
 
         if (isset($params['uid'])) {
-            if (preg_match('#^[1-9][0-9]*$#', $params['uid']) != 1)
+            if (preg_match('#^[0-9a-z]+$#', $params['uid']) != 1)
                 unset($params['uid']);
         }
 
