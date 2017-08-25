@@ -1,7 +1,7 @@
 base   flattr
 author Gina Häußge
 email  osd@foosel.net
-date   2010-08-22
+date   2017-08-25
 name   Flattr Plugin
 desc   Inserts a flattr button into the current wikipage
 url    http://foosel.org/snippets/dokuwiki/flattr

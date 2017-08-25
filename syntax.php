@@ -18,21 +18,6 @@ require_once (DOKU_INC . 'inc/pageutils.php');
 
 class syntax_plugin_flattr extends DokuWiki_Syntax_Plugin {
 
-    function getInfo() {
-        try {
-            return parent::getInfo();
-        } catch (Exception $e) {
-            return array (
-                'author' => 'Gina Haeussge',
-                'email' => 'osd@foosel.net',
-                'date' => @file_get_contents(DOKU_PLUGIN.'flattr/VERSION'),
-                'name' => 'Flattr Plugin',
-                'desc' => 'Inserts a flattr button into the current wikipage',
-                'url' => 'http://foosel.org/snippets/dokuwiki/flattr',
-            );
-        }
-    }
-
     function getType() {
         return 'substition';
     }
@@ -50,7 +35,7 @@ class syntax_plugin_flattr extends DokuWiki_Syntax_Plugin {
         $this->Lexer->addSpecialPattern('<flattr\s*/>', $mode, 'plugin_flattr');
     }
 
-    function handle($match, $state, $pos, & $handler) {
+    function handle($match, $state, $pos, Doku_Handler $handler) {
         // do not allow the syntax in comments
         if (isset($_REQUEST['comment']))
             return false;
@@ -91,7 +76,7 @@ class syntax_plugin_flattr extends DokuWiki_Syntax_Plugin {
      * @param $indata
      * @return unknown_type
      */
-    function render($mode, & $renderer, $indata) {
+    function render($mode, Doku_Renderer $renderer, $data) {
         global $ID;
 
         $params = $indata;
